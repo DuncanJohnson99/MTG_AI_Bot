@@ -36,28 +36,14 @@ ATTACK_PROBABILITY = 100            # Percentage chance that the bot will attack
 
 MAX_CARD_CYCLES = 2                 # Maximum number of times the bot will cycle through cards attempting to play them
 
-DAILY_FULL_GAMES = 30               # How many full games will be played in a rotation before going to slow play mode
-SECONDS_UNTIL_ROTATION = 43200      # How often the bot will switch from slow play mode (86400 = 1 day, 3600 = 1 hour)
-
 SPEED_PLAY_CARD = 0.5               # Delay between attempting to play a card
-SPEED_DECK_SELECT = 1               # Delay between clicks on deck select screen
 SPEED_OPPONENT_TURN_CLICK = 1       # Delay between clicking Resolve button during opponents turn
-
-SLOW_PLAY_MODE = False              # When True, don't accept draw at Mulligan and don't play (STATIC_CLICK_DRAW_ACCEPT must be False)
-STATIC_CLICK_DRAW_ACCEPT = True     # A fix for difficulty detecting draw accept. Clicks Accept after x seconds delay.
-SLOW_DRAW_BUT_PLAY_MULLIGAN_PRESS_DELAY = 10    # Delay before pressing the accept draw button (may not always hit)
 
 CLICKS_DISABLED = False             # Mouse clicks will not register, for testing
 MOUSE_MOVE_DISABLE = False          # Mouse movement will not register, for testing
 
 LOG_LEVEL = logging.INFO
 
-
-# ----- GLOBALS -----
-
-DECK_COLOURS = ['Green', 'Black', 'White', 'Blue', 'Red']       # Decks for auto select
-GAME_COUNT = 0                                                  # Keep track of full games
-start = (datetime.today()).timestamp()                          # Keep track of when rotation time has elapsed
 
 # ----- SET UP LOGGING -----
 
@@ -79,21 +65,14 @@ class Cord:
     click_to_continue = (250, 200)      # Clicking (almost) anywhere in the screen to advance (usually after a match)
 
     # Card positions to play. Remove [::2] for all positions (less likely to need a 2nd cycle, but slower)
-    cards_in_hand = ((1000,1079), (890,1079), (1050,1079), (840,1079), (1160,1079), (720,1079), (1225,1079), (660,1079),
+    cards_in_hand = ((1000,1079), (890,1079), (1050,1079), (610,1079), (1160,1079), (720,1079), (1225,1079), (660,1079),
                      (1325,1079), (540,1079), (1425,1079), (490,1079), (1550,1079), (360,1079))
 
-    undo_button = (1870, 840)           # Undo button when casting a spell
-    no_attacks_button = (1770, 880)     # During combat phase, the No Attacks button
+    undo_button = (1750, 950)           # Undo button when casting a spell
     order_blockers_done = (970, 840)    # Click done to auto-assign damage to multiple blockers
     resolve_button = (1770, 950)        # Resolve button, also No Blocks during opponent combat
     keep_draw = (1140, 870)             # Accept drawn cards at start of match
     pass_turn = (1850, 1030)            # Pass turn button (during both player's turns)
-    deck_select = (1750, 800)           # Click to select which deck to use
-    white_deck = (450, 500)
-    green_deck = (760, 500)
-    black_deck = (1055, 500)
-    blue_deck = (1350, 500)
-    red_deck = (170, 685)               # Above decks not actually required, this cord always selects the next in cycle
     smiley_face_continue = (960, 850)   # Skip on smiley face screen
     opponent_avatar = (955, 105)        # To select when attacking in case opponent has Planeswalker in play
     cancel_area = (1730, 1030)          # Just a blank area to click to cancel
@@ -103,49 +82,19 @@ class Zone:
 
     # Maintain co-ordinates of zones/boxes that will be snipped for image match
 
-    but_play = (1620, 980, 1850, 1035)         # On opening screen at game launch [ FINISHED ]
-    friends_icon = (30, 1005, 35, 1015)         # In match, Match Victory, or Match Defeat
-    match_result = (1835, 1020, 1868, 1038)     # Match is over and awaiting click
-    undo_but = (1860, 830, 1870, 840)           # Undo button, appears when not sufficient mana to cast card
-    p1_main_phase = (830, 872, 840, 882)        # Main phase icon, indicating your turn, or not first main
-    p1_second_phase = (1080, 870, 1090, 880)    # Second phase icon
-    p2_main_phase = (850, 118, 860, 128)        # Opponent Main phase icon
-    p2_second_phase = (1058, 118, 1068, 128)    # Opponent Second phase icon
-    mulligan_button = (764, 857, 766, 877)      # Confirms start of match Mulligan/Keep
-    shield_icon = (1770, 824, 1780, 834)        # Shield icon, black when having to choose No/All Attack
-    block_order = (1316, 783, 1329, 785)        # Screen when opponent chooses multiple blockers
-    harmonix_name = (98, 1030, 99, 1040)        # Player name at bottom left of combat screen
-    smiley_face = (1236, 426, 1240, 455)        # Last 'h' on smiley face "Did you have fun" screen
-
-
-
-def check_if_new_day(start_time):
-
-    split = (datetime.today()).timestamp()
-
-    print(f"The last mode change was {start_time}")
-    print(f"The current time is {split}")
-    print(f"The difference is {split - start_time} seconds")
-
-    if split - start_time > SECONDS_UNTIL_ROTATION:
-        print("It's been longer than a day")
-        global start
-        start = (datetime.today()).timestamp()
-        return True
-    else:
-        print("It hasn't been a day yet")
-        return False
-
-
-def new_day_actions():
-    global SLOW_PLAY_MODE
-    print(f"SLOW_PLAY_MODE pre function: {SLOW_PLAY_MODE}")
-    if SLOW_PLAY_MODE == False:
-        SLOW_PLAY_MODE = True
-    else:
-        SLOW_PLAY_MODE = False
-
-    print(f"SLOW_PLAY_MODE post function: {SLOW_PLAY_MODE}")
+    play_button = (1620, 980, 1850, 1035)         # On opening screen at game launch [ FINISHED ]
+    victory_result = (700, 490, 1200, 590)     # Match is over (win) and awaiting click
+    defeat_result = (700, 490, 1200, 590)     # Match is over (loss) and awaiting click
+    undo_button = (1658, 920, 1900, 975)           # Undo button, appears when not sufficient mana to cast card
+    our_first_main_icon = (820, 855, 850, 900)        # Main phase icon, indicating your turn, or not first main
+    our_second_main_icon = (1070, 860, 1100, 895)    # Second phase icon
+    opp_first_main_icon = (840, 108, 870, 145)        # Opponent Main phase icon
+    opp_second_main_icon = (1053, 112, 1077, 140)    # Opponent Second phase icon
+    keep_hand_button = (1040, 845, 1225, 905)      # Confirms start of match Mulligan/Keep
+    all_attack_button = (1700, 940, 1850, 960)
+    no_blocks_button = (1658, 925, 1900, 975)
+    order_blockers = (822, 846, 1080, 900)        # Screen when opponent double/triple blocks
+    smiley_face = (1236, 426, 1240, 455)        # TODO: IMPLEMENT ONCE WE SEE SMILEY FACE
 
 
 def leftClick():
@@ -176,89 +125,41 @@ def mousePos(cord):
         win32api.SetCursorPos((cord[0], cord[1]))
 
 
-def get_screen_snip(box, zone_name):
+def get_screen_snip(box):
     image = ImageGrab.grab(box)
-    image.save(zone_name + ".PNG")
+    return image
 
 
 def scan_screen():
 
-    get_screen_snip(Zone.but_play, "play_button")
-
-    """
-
-    
-    
-
-    friends_icon_value = get_screen_snip(Zone.friends_icon)
-    print("friends_icon_value: {}".format(friends_icon_value))
-
-    undo_button_value = get_screen_snip(Zone.undo_but)
-    print("undo_but_value: {}".format(undo_button_value))
-
-    p1_main_phase_value = get_screen_snip(Zone.p1_main_phase)
-    print("p1_main_phase_value: {}".format(p1_main_phase_value))
-
-    p1_second_phase_value = get_screen_snip(Zone.p1_second_phase)
-    print("p1_second_phase_value: {}".format(p1_second_phase_value))
-
-    p2_main_phase_value = get_screen_snip(Zone.p2_main_phase)
-    print("p2_main_phase_value: {}".format(p2_main_phase_value))
-
-    p2_second_phase_value = get_screen_snip(Zone.p2_second_phase)
-    print("p2_second_phase_value: {}".format(p2_second_phase_value))
-
-    mulligan_button_value = get_screen_snip(Zone.mulligan_button)
-    print("mulligan_button_value: {}".format(mulligan_button_value))
-
-    shield_icon_value = get_screen_snip(Zone.shield_icon)
-    print("shield_icon_value: {}".format(shield_icon_value))
-
-    block_order_value = get_screen_snip(Zone.block_order)
-    print("block_order_value: {}".format(block_order_value))
-
-    smiley_face_value = get_screen_snip(Zone.smiley_face)
-    print("smiley_face_value: {}".format(smiley_face_value))
-"""
-    # change file path to your machine or the current virtual machine
-    hash0 = imagehash.average_hash(Image.open(r"E:/Python/MTG_AI_Bot/MTGA Icon Snips/play_button.PNG"))
-    hash1 = imagehash.average_hash(Image.open("play_button.PNG"))
+    hash_play_0 = imagehash.average_hash(get_screen_snip(Zone.play_button))
+    hash_play_1 = imagehash.average_hash(Image.open(r"E:\Python\MTG_AI_Bot\MTGA Icon Snips\play_button.PNG"))
     cutoff = 18
-    print(hash0 - hash1)
-    if hash0 - hash1 < cutoff:
+    if hash_play_0 - hash_play_1 < cutoff:
         print("On start screen with Play button")
-    else:
-        print("we are not on the start screen")
+        return "Start"
 
+    hash_victory_0 = imagehash.average_hash(get_screen_snip(Zone.victory_result))
+    hash_victory_1 = imagehash.average_hash(
+        Image.open(r"E:\Python\MTG_AI_Bot\MTGA Icon Snips\victory_result.PNG"))
+    cutoff = 15
+    if hash_victory_0 - hash_victory_1 < cutoff:
+        print("we have won the game")
+        return "Match Victory"
 
-scan_screen()
+    hash_defeat_0 = imagehash.average_hash(get_screen_snip(Zone.defeat_result))
+    hash_defeat_1 = imagehash.average_hash(
+        Image.open(r"E:\Python\MTG_AI_Bot\MTGA Icon Snips\defeat_result.PNG"))
+    cutoff = 15
+    if hash_defeat_0 - hash_defeat_1 < cutoff:
+        print("we have lost the game")
+        return "Match Defeat"
 
-
-"""
-
-    elif (but_play_value in range(Range.play_button[0], Range.play_button[1])) and \
-            but_play_sidebar_value in range(Range.play_button_sidebar[0], Range.play_button_sidebar[1]):
-        print("On deck select screen with Play button")
-        return("Deck Select")
-
-    elif check_in_match():
-        print("In match")
-        return("In Match")
-
-    elif (smiley_face_value in range(Range.smiley_face[0], Range.smiley_face[1])):
-        print("On smiley face fun screen!")
-        mousePos(Cord.smiley_face_continue)
-        time.sleep(1)
-        leftClick()
-
-    elif (friends_icon_value in range(Range.friends_icon_match_result[0], Range.friends_icon_match_result[1])):
-        print("On match result screen")
-        return("Match Result")
-
-
-    elif friends_icon_value in range(Range.friends_icon_rewards[0], Range.friends_icon_rewards[1]):
-        print("On Rewards Screen")
-        return("Rewards")
+    hash_keep_hand_0 = imagehash.average_hash(get_screen_snip(Zone.keep_hand_button))
+    hash_keep_hand_1 = imagehash.average_hash(Image.open(r"E:\Python\MTG_AI_Bot\MTGA Icon Snips\keep_hand_button.PNG"))
+    cutoff = 12
+    if hash_keep_hand_0 - hash_keep_hand_1 < cutoff:
+        return "In Match"
 
 
 def start_screen_actions():
@@ -267,42 +168,19 @@ def start_screen_actions():
 
     print("Clicking Play Button")
     mousePos(Cord.play_button)
-    #time.sleep(0.1)
-    leftClick()
-
-
-def deck_select_actions():
-
-    # Currently just click start, in future select decks to fulfil daily challenges
-
-    DECK_COLOURS.append(DECK_COLOURS[0])
-    DECK_COLOURS.pop(0)
-    next_deck = DECK_COLOURS[0]
-    print("Next deck will be {} --- {}".format(next_deck, DECK_COLOURS))
-
-    mousePos(Cord.deck_select)
-    time.sleep(SPEED_DECK_SELECT)
-    leftClick()
-
-    mousePos(Cord.red_deck)
-    time.sleep(SPEED_DECK_SELECT)
-    leftClick()
-
-    time.sleep(SPEED_DECK_SELECT)
-
-    print("Clicking Play Button")
-    mousePos(Cord.play_button)
-    #time.sleep(0.1)
+    time.sleep(0.5)
     leftClick()
 
 
 def match_result_actions():
 
-    # Just click anywhere to proceed
+    # Just click anywhere to proceed and then click through rewards
 
     print("Clicking to continue")
     mousePos(Cord.click_to_continue)
     leftClick()
+    time.sleep(4)
+    rewards_actions()
 
 
 def rewards_actions():
@@ -315,76 +193,48 @@ def rewards_actions():
 
 
 def check_if_my_turn():
-    p1_main_phase_grayscale = get_greyscale_value(Zone.p1_main_phase)
-    p1_second_phase_grayscale = get_greyscale_value(Zone.p1_second_phase)
-    p2_main_phase_value = get_greyscale_value(Zone.p2_main_phase)
-    p2_second_phase_value = get_greyscale_value(Zone.p2_second_phase)
-
-    mulligan_button_value = get_greyscale_value(Zone.mulligan_button)
-    print("mulligan_button_value: {}".format(mulligan_button_value))
-
-    print("Checking if my turn...")
-
-    if ((p2_main_phase_value in range(Range.p2_main_phase[0], Range.p2_main_phase[1])) or
-        (p2_second_phase_value in range(Range.p2_second_phase[0], Range.p2_second_phase[1]))) \
-            and ((p1_main_phase_grayscale not in range(Range.p1_main_phase[0], Range.p1_main_phase[1])) or
-                 (p1_second_phase_grayscale not in range(Range.p1_second_phase[0], Range.p1_second_phase[1]))):
-        print("*** OPPONENT TURN ***")
+    hash_opp_main_0 = imagehash.average_hash(get_screen_snip(Zone.opp_first_main_icon))
+    hash_opp_main_1 = imagehash.average_hash(
+        Image.open(r"E:\Python\MTG_AI_Bot\MTGA Icon Snips\opp_first_main_icon.PNG"))
+    cutoff = 2
+    if hash_opp_main_0 - hash_opp_main_1 < cutoff:
         return False
-    else:
-        print("*** MY TURN ***")
+
+    hash_opp_second_0 = imagehash.average_hash(get_screen_snip(Zone.opp_second_main_icon))
+    hash_opp_second_1 = imagehash.average_hash(
+        Image.open(r"E:\Python\MTG_AI_Bot\MTGA Icon Snips\opp_second_main_icon.PNG"))
+    cutoff = 2
+    if hash_opp_second_0 - hash_opp_second_1 < cutoff:
+        return False
+
+    hash_our_main_0 = imagehash.average_hash(get_screen_snip(Zone.our_first_main_icon))
+    hash_our_main_1 = imagehash.average_hash(
+        Image.open(r"E:\Python\MTG_AI_Bot\MTGA Icon Snips\our_first_main_icon.PNG"))
+    cutoff = 2
+    if hash_our_main_0 - hash_our_main_1 < cutoff:
         return True
 
-
-def check_in_match():
-    in_match = get_greyscale_value(Zone.friends_icon)
-    print("Checking if in match: friends_icon was {}, in match usually 1304 - 1410".format(in_match))
-
-    if (in_match in range(Range.friends_icon_in_match[0], Range.friends_icon_in_match[1])):
-        print("Still in match...")
+    hash_our_second_0 = imagehash.average_hash(get_screen_snip(Zone.our_second_main_icon))
+    hash_our_second_1 = imagehash.average_hash(
+        Image.open(r"E:\Python\MTG_AI_Bot\MTGA Icon Snips\our_second_main_icon.PNG"))
+    cutoff = 2
+    if hash_our_second_0 - hash_our_second_1 < cutoff:
         return True
-    else:
-        print("Not in match, returning False. friend_icon value of {}".format(in_match))
-        return False
 
 
 def match_actions():
-    global GAME_COUNT
     print("Starting match_actions...")
 
-    time.sleep(2)
+    time.sleep(1)
 
-    if not STATIC_CLICK_DRAW_ACCEPT:
-        mulligan_timeout = 0
-        mulligan_button_value = get_greyscale_value(Zone.mulligan_button)
-        while ((mulligan_button_value not in range(Range.mulligan_button[0], Range.mulligan_button[1]))):
-            print("Not seeing Mulligan button, will keep looking...")
-            print(f"mulligan_button_value: {mulligan_button_value}")
-            mulligan_timeout +=1
-            if mulligan_timeout > 50:
-                break
-            time.sleep(1)
+    mousePos(Cord.keep_draw)
+    time.sleep(0.5)
+    leftClick()
 
-        print("Found Mulligan button")
-
-        # If SLOW_PLAY_MODE is enabled, wait until timer runs out for deck selection, to see if opponent will quit
-        if GAME_COUNT < MAX_CARD_CYCLES:
-            mousePos(Cord.keep_draw)
-            leftClick()
-            print("Accepted Draw")
-        else:
-            return
-
-    if STATIC_CLICK_DRAW_ACCEPT:
-        time.sleep(SLOW_DRAW_BUT_PLAY_MULLIGAN_PRESS_DELAY)
-        mousePos(Cord.keep_draw)
-        leftClick()
-        print("Attempted to accept Draw as part of STATIC_CLICK_DRAW_ACCEPT mode")
-
-    while(check_in_match() == True):
+    while scan_screen() != ("Match Victory" or "Match Defeat" or "Start"):
         print("Beginning In-Match Loop")
 
-        while(check_if_my_turn() == False):
+        while not check_if_my_turn():
             print("Waiting for my turn...")
 
             mousePos(Cord.resolve_button)
@@ -395,25 +245,29 @@ def match_actions():
         card_cycles = 1
         print("Card cycles is set to {}".format(card_cycles))
 
-        while(card_cycles <= MAX_CARD_CYCLES):
+        while card_cycles <= MAX_CARD_CYCLES:
 
             print("Beginning card cycle phase...")
 
-            for cord in (Cord.cards_in_hand):
+            for cord in Cord.cards_in_hand:
 
-                if check_in_match() == False:
+                if scan_screen() == "Match Victory" or scan_screen() == "Match Defeat" or scan_screen() == "Start":
                     break
 
                 print("Checking for combat phase...")
-                shield_icon_value = get_greyscale_value(Zone.shield_icon)
-                print(f"shield_icon_value: {shield_icon_value}")
-                if ((shield_icon_value in range(Range.combat_shield_icon[0], Range.combat_shield_icon[1]))):
+
+                hash_attack_all_0 = imagehash.average_hash(get_screen_snip(Zone.all_attack_button))
+                hash_attack_all_1 = imagehash.average_hash(
+                    Image.open(r"E:\Python\MTG_AI_Bot\MTGA Icon Snips\all_attack_button.PNG"))
+                cutoff = 10
+                print(hash_attack_all_0 - hash_attack_all_1)
+                if hash_attack_all_0 - hash_attack_all_1 < cutoff:
                     print("Confirmed combat phase")
                     time.sleep(1)
 
-                    x = randrange(1, 101)
-                    if x < ATTACK_PROBABILITY:
-                        print(f"Attacking with all creatures (roll of {x}")
+                    attack_prob = randrange(1, 101)
+                    if attack_prob < ATTACK_PROBABILITY:
+                        print(f"Attacking with all creatures (roll of {attack_prob}")
                         mousePos(Cord.resolve_button)
                         leftClick()
                         time.sleep(1)
@@ -428,47 +282,52 @@ def match_actions():
                     card_cycles += 99
                     break
 
-                elif (check_if_my_turn() == False):
+                elif not check_if_my_turn():
                     print("My opponent's turn, so incrementing card_cycles by 99 and breaking")
                     card_cycles += 99
                     break
 
-
                 time.sleep(SPEED_PLAY_CARD)
                 mousePos(cord)
                 doubleLeftClick()
-                time.sleep(1)
-                undo_button_value = get_greyscale_value(Zone.undo_but)
-                print(f"undo_button_value: {undo_button_value}")
-                if (undo_button_value in range(Range.undo_button[0], Range.undo_button[1])):
+                time.sleep(0.5)
+
+                hash_undo_0 = imagehash.average_hash(get_screen_snip(Zone.undo_button))
+                hash_undo_1 = imagehash.average_hash(
+                    Image.open(r"E:\Python\MTG_AI_Bot\MTGA Icon Snips\undo_button.PNG"))
+                cutoff = 18
+                print(hash_undo_0 - hash_undo_1)
+                if hash_undo_0 - hash_undo_1 < cutoff:
                     print("Detected Undo button, so pressing it...")
                     mousePos(Cord.undo_button)
-                    print("Attempting to play card in cycle {}".format(card_cycles))
                     leftClick()
 
             print("Gone through all cards in hand, so incrementing card_cycles by 1")
             card_cycles += 1
             print("Card cycles is now {}/{}".format(card_cycles, MAX_CARD_CYCLES))
-            #time.sleep(1)
+            time.sleep(1)
 
         print("Should have completed all card_cycles, so now clicking resolve_button")
         mousePos(Cord.resolve_button)
         leftClick()
 
-        block_order_value = get_greyscale_value(Zone.block_order)
-        print(f"block_order_value: {block_order_value}")
-        if block_order_value in range(Range.block_order[0], Range.block_order[1]):
+        hash_order_blockers_0 = imagehash.average_hash(get_screen_snip(Zone.order_blockers))
+        hash_order_blockers_1 = imagehash.average_hash(
+            Image.open(r"E:\Python\MTG_AI_Bot\MTGA Icon Snips\order_blockers.PNG"))
+        cutoff = 18
+        print(hash_order_blockers_0 - hash_order_blockers_1)
+        if hash_order_blockers_0 - hash_order_blockers_1 < cutoff:
             print("Detected Block Order, clicking done...")
             mousePos(Cord.order_blockers_done)
             leftClick()
 
         print("Checking if the match is over...")
-        if not check_in_match():
+        if scan_screen() == "Match Victory" or scan_screen() == "Match Defeat":
             print("Match is over, going back to main loop")
             break
 
 
-logger.info("*** Started mgta_bot ***")
+logger.info("*** Started the bot ***")
 
 while True:
     screen = scan_screen()
@@ -476,32 +335,19 @@ while True:
     if screen == "Start":
         start_screen_actions()
 
-    elif screen == "Deck Select":
-        deck_select_actions()
+    elif screen == "In Match":
+        match_actions()
+        logger.info(f"We're in a game!")
 
-    elif (screen == "In Match"):
-        if (SLOW_PLAY_MODE and not STATIC_CLICK_DRAW_ACCEPT):
-            pass
-            if check_if_new_day(start):
-                SLOW_PLAY_MODE = False
-        else:
-            match_actions()
-            GAME_COUNT += 1
-            logger.info(f"Incremented GAME_COUNT to {GAME_COUNT}/{DAILY_FULL_GAMES}")
-            if GAME_COUNT >= DAILY_FULL_GAMES:
-                SLOW_PLAY_MODE = True
-                GAME_COUNT = 0
-
-    elif screen == "Match Result":
-        logger.info("Match end")
+    elif screen == "Match Victory":
+        logger.info("Match Victory")
         match_result_actions()
 
-    elif screen == "Rewards":
-        rewards_actions()
-
-    print(f"***** GAME COUNT: {GAME_COUNT} / {DAILY_FULL_GAMES} ***** SLOW MODE: {SLOW_PLAY_MODE} *****")
+    elif screen == "Match Defeat":
+        logger.info("Match Defeat")
+        match_result_actions()
 
     time.sleep(1)
 
-"""
+
 
